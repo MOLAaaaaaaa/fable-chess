@@ -1,0 +1,23 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/fable
+/fable-train
+
+# Self-play training data (regenerable via `fable-train selfplay`)
+data/
+
+# Trained networks (the shipped fable.nnue is tracked; per-run experiment
+# nets under nets/ are not)
+nets/
+
+# Test / scratch artifacts
+*.tmp
+*.bak
+*.out
+.idea/
+.vscode/
+*.swp
