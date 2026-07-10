@@ -149,3 +149,23 @@ internal/search    PVS search, TT, ordering, time management, lazy SMP
 internal/train     data format, selfplay, trainer (Adam, mirror, early stop), match
 internal/uci       UCI protocol front end
 ```
+
+## Strength roadmap (measured 2026-07)
+
+Bootstrap history on this machine (400-600 game matches, 8000 nodes/move):
+gen2 net vs material was +95 Elo; two more generations (8k games x 20k nodes
+each, hidden 128 -> 192 -> 256) brought the shipped net to **+83 Elo over the
+gen2 net** and **+176 over material**. Gen5 plateaued with this recipe.
+
+Highest-leverage next steps, in order:
+1. **Training**: deeper labels (50k-100k nodes), 20k+ games/gen, lambda
+   schedule (0.5 early gens -> 0.7 late), weighted 3-gen data mixes, then
+   h384/h512 once past ~3M positions. Output buckets (material-count) are the
+   next structural win.
+2. **Infrastructure**: a UCI-vs-UCI match runner (fastchess/cutechess). The
+   built-in `match` compares nets only — search changes currently cannot be
+   SPRT-tested, which blocks search tuning entirely.
+3. **Search** (each ~+10-30 Elo, needs SPRT): correction history (requires a
+   pawn hash key), probcut, capture LMR, SPSA tuning of all constants.
+4. **Speed** (~10-20%): staged movegen (try TT move before generating),
+   unrolled output layer, `go build -pgo`.

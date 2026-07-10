@@ -300,6 +300,10 @@ func (t *thread) search(depth, alpha, beta, ply int, cutNode bool) int {
 		}
 		isQuiet := pos.IsQuiet(m)
 		moveCount++
+		histScore := 0
+		if isQuiet {
+			histScore = t.quietScore(m, ply) // must be read before Make
+		}
 
 		// Shallow-depth pruning, only after a real score is on the board.
 		if !pvNode && bestScore > -MateBound {
@@ -372,6 +376,8 @@ func (t *thread) search(depth, alpha, beta, ply int, cutNode bool) int {
 				if givesCheck {
 					r--
 				}
+				// Reduce well-scoring quiets less, poor ones more.
+				r -= max(-2, min(2, histScore/8192))
 				if r < 0 {
 					r = 0
 				}
